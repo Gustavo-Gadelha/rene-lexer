@@ -1,5 +1,5 @@
-//1-alterar o reconhecimento de tokens de java para a linguagem alvo
-//2-incrementar o reconhecimento de tokens que não estão presentes
+// 1-alterar o reconhecimento de tokens de java para a linguagem alvo
+// 2-incrementar o reconhecimento de tokens que não estão presentes
 package edu.fafic.auxiliares;
 
 import edu.fafic.error.LexerException;
@@ -33,7 +33,7 @@ public class AnalisadorLexico {
 
         while (!feito) {
 
-            int caractere = pegardoBuffer();
+            int caractere = pegarDoBuffer();
 
             if (Character.isWhitespace(caractere) && tipoAtual == Token.EOF) {
 
@@ -201,7 +201,7 @@ public class AnalisadorLexico {
 
                         default: {
 
-                            retoneparaBuffer(caractere);
+                            retorneParaBuffer(caractere);
                             estado = getProximoEstado();
 
                         }
@@ -223,7 +223,7 @@ public class AnalisadorLexico {
                         feito = true;
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         feito = true;
 
                     }
@@ -242,7 +242,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         feito = true;
 
                     }
@@ -260,7 +260,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         feito = true;
 
                     }
@@ -277,7 +277,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         feito = true;
                     }
 
@@ -290,7 +290,7 @@ public class AnalisadorLexico {
 
                         while (caractere != '\n' && caractere != -1) {
 
-                            caractere = pegardoBuffer();
+                            caractere = pegarDoBuffer();
 
                         }
 
@@ -298,15 +298,15 @@ public class AnalisadorLexico {
 
                     } else if (caractere == '*') {
 
-                        caractere = pegardoBuffer();
+                        caractere = pegarDoBuffer();
 
                         while (caractere != '*' && caractere != -1) {
 
-                            caractere = pegardoBuffer();
+                            caractere = pegarDoBuffer();
 
                         }
 
-                        caractere = pegardoBuffer();
+                        caractere = pegarDoBuffer();
 
                         if (caractere != '/') {
 
@@ -323,7 +323,7 @@ public class AnalisadorLexico {
                         tipoAtual = Token.OP;
                         valorAtual = new Integer(Token.DIV);
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         feito = true;
 
                     }
@@ -342,7 +342,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
 
                     }
@@ -352,7 +352,7 @@ public class AnalisadorLexico {
 
                 case 29: {
 
-                    if (caractere == '*' && pegardoBuffer() == '/') {
+                    if (caractere == '*' && pegarDoBuffer() == '/') {
 
                         valorAtual = sBuffer;
                         feito = true;
@@ -379,7 +379,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
 
                     }
@@ -400,7 +400,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
 
                     }
@@ -418,7 +418,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
 
                         if (PalavrasChave.isPalavraChave(sBuffer)) {
 
@@ -451,7 +451,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
 
                     }
@@ -473,7 +473,7 @@ public class AnalisadorLexico {
 		  }*/
                     else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
 
                         valorAtual = new Integer(sBuffer.toString());
                         feito = true;
@@ -495,7 +495,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
 
                     }
@@ -505,7 +505,7 @@ public class AnalisadorLexico {
 
                 case 42: {
 
-                    if (Simbolos.isLetraouDigito(caractere)) {
+                    if (Simbolos.isLetraOuDigito(caractere)) {
 
                         estado = 44;
 
@@ -519,7 +519,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
                     }
 
@@ -536,7 +536,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
 
                     }
@@ -554,7 +554,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
 
                     }
@@ -574,7 +574,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
 
                         estado = getProximoEstado();
 
@@ -585,7 +585,7 @@ public class AnalisadorLexico {
 
                 case 47: {
 
-                    if (Simbolos.isLetraouDigito(caractere) || caractere == ' ') {
+                    if (Simbolos.isLetraOuDigito(caractere) || caractere == ' ') {
 
                         estado = 47;
 
@@ -599,7 +599,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = 49;
 
                     }
@@ -633,7 +633,7 @@ public class AnalisadorLexico {
 
                     } else {
 
-                        retoneparaBuffer(caractere);
+                        retorneParaBuffer(caractere);
                         estado = getProximoEstado();
 
                     }
@@ -655,7 +655,7 @@ public class AnalisadorLexico {
 
     }
 
-    private int pegardoBuffer() throws IOException {
+    private int pegarDoBuffer() throws IOException {
 
         int result;
 
@@ -675,7 +675,7 @@ public class AnalisadorLexico {
 
     }
 
-    private void retoneparaBuffer(int c) {
+    private void retorneParaBuffer(int c) {
 
         if (bufferValid) {
 
@@ -711,7 +711,7 @@ public class AnalisadorLexico {
                 break;
 
             default:
-                throw new LexerException("Erro Lexico: Imposs�vel reconhecer token ");
+                throw new LexerException("Erro Lexico: Impossível reconhecer token ");
 
         }
 
