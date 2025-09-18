@@ -1,5 +1,3 @@
-// 1-alterar o reconhecimento de tokens de java para a linguagem alvo
-// 2-incrementar o reconhecimento de tokens que não estão presentes
 package edu.fafic.auxiliares;
 
 import edu.fafic.error.LexerException;
@@ -9,714 +7,406 @@ import java.io.IOException;
 
 public class AnalisadorLexico {
 
-    // Atributos
-
-    private BufferedReader reader;
+    private final BufferedReader reader;
     private int estado;
     private int buffer;
-    private boolean bufferValid = false;
+    private boolean temBuffer = false;
 
     public AnalisadorLexico(BufferedReader reader) {
-
         this.reader = reader;
-
     }
 
     public Token pegarProximoToken() throws IOException, LexerException {
 
         boolean feito = false;
-        int tipoAtual = Token.EOF;
-        Object valorAtual = null;
-        StringBuffer sBuffer = null;
+        int tipo = Token.EOF;
+        Object valor = null;
+        StringBuffer stringBuffer = new StringBuffer();
 
         estado = 0;
 
-        while (!feito) {
+        do {
+            int caractere = doBuffer();
 
-            int caractere = pegarDoBuffer();
-
-            if (Character.isWhitespace(caractere) && tipoAtual == Token.EOF) {
-
+            if (Character.isWhitespace(caractere) && tipo == Token.EOF) {
                 continue;
-
-            } else if (caractere == -1 && tipoAtual == Token.EOF) {
-
+            } else if (caractere == -1 && tipo == Token.EOF) {
                 return Token.EOF();
-
             }
 
             switch (estado) {
-
-                case 0: {
-
+                case 0 -> {
                     switch (caractere) {
-
-                        case '<': {
-
+                        case '<' -> {
                             estado = 1;
-                            tipoAtual = Token.RELOP;
-                            valorAtual = Integer.valueOf(Token.LT);//less than
-
+                            tipo = Token.RELOP;
+                            valor = Token.LT;
                         }
-                        break;
 
-                        case '>': {
-
+                        case '>' -> {
                             estado = 10;
-                            tipoAtual = Token.RELOP;
-                            valorAtual = Integer.valueOf(Token.GT);
-
+                            tipo = Token.RELOP;
+                            valor = Token.GT;
                         }
-                        break;
 
-                        case '=': {
-
+                        case '=' -> {
                             estado = 4;
-                            tipoAtual = Token.AT;
-                            valorAtual = new Integer(Token.ATR);
-
+                            tipo = Token.AT;
+                            valor = Token.ATR;
                         }
-                        break;
 
-                        case '!': {
-
+                        case '!' -> {
                             estado = 7;
-                            tipoAtual = Token.LOG;
-                            valorAtual = new Integer(Token.NOT);
-
+                            tipo = Token.LOG;
+                            valor = Token.NOT;
                         }
-                        break;
 
-                        case '+': {
-
-                            tipoAtual = Token.OP;
-                            valorAtual = new Integer(Token.AD);
-
+                        case '+' -> {
+                            tipo = Token.OP;
+                            valor = Token.AD;
                             feito = true;
-
                         }
-                        break;
 
-                        case '-': {
-
-                            tipoAtual = Token.OP;
-                            valorAtual = new Integer(Token.SUB);
-
+                        case '-' -> {
+                            tipo = Token.OP;
+                            valor = Token.SUB;
                             feito = true;
-
                         }
-                        break;
 
-                        case '*': {
-
-                            tipoAtual = Token.OP;
-                            valorAtual = new Integer(Token.MUL);
-
+                        case '*' -> {
+                            tipo = Token.OP;
+                            valor = Token.MUL;
                             feito = true;
-
                         }
-                        break;
 
-                        case '/': {
-
+                        case '/' -> {
                             estado = 24;
-
                         }
-                        break;
 
-                        case '&': {
-
+                        case '&' -> {
                             estado = 28;
-
                         }
-                        break;
 
-                        case '|': {
-
+                        case '|' -> {
                             estado = 32;
-
                         }
-                        break;
 
-                        case ',': {
-
-                            tipoAtual = Token.PONTUACAO;
-                            valorAtual = new Integer(Token.VG);
-
+                        case ',' -> {
+                            tipo = Token.PONTUACAO;
+                            valor = Token.VG;
                             feito = true;
-
                         }
-                        break;
 
-                        case ';': {
-
-                            tipoAtual = Token.PONTUACAO;
-                            valorAtual = new Integer(Token.PV);
-
+                        case ';' -> {
+                            tipo = Token.PONTUACAO;
+                            valor = Token.PV;
                             feito = true;
-
                         }
-                        break;
 
-                        case '(': {
-
-                            tipoAtual = Token.PONTUACAO;
-                            valorAtual = new Integer(Token.AP);
-
+                        case '(' -> {
+                            tipo = Token.PONTUACAO;
+                            valor = Token.AP;
                             feito = true;
-
                         }
-                        break;
 
-                        case ')': {
-
-                            tipoAtual = Token.PONTUACAO;
-                            valorAtual = new Integer(Token.FP);
-
+                        case ')' -> {
+                            tipo = Token.PONTUACAO;
+                            valor = Token.FP;
                             feito = true;
-
                         }
-                        break;
 
-                        case '{': {
-
-
-                            tipoAtual = Token.PONTUACAO;
-                            valorAtual = new Integer(Token.AC);
-
+                        case '{' -> {
+                            tipo = Token.PONTUACAO;
+                            valor = Token.AC;
                             feito = true;
-
                         }
-                        break;
 
-                        case '}': {
-
-                            tipoAtual = Token.PONTUACAO;
-                            valorAtual = new Integer(Token.FC);
-
+                        case '}' -> {
+                            tipo = Token.PONTUACAO;
+                            valor = Token.FC;
                             feito = true;
-
                         }
-                        break;
 
-                        default: {
-
-                            retorneParaBuffer(caractere);
+                        default -> {
+                            paraBuffer(caractere);
                             estado = getProximoEstado();
-
                         }
-
                     }
-
                 }
-                break;
 
-                case 1: {
-
+                case 1 -> {
                     if (caractere == '=') {
-
-                        valorAtual = new Integer(Token.LE);
+                        valor = Token.LE;
                         feito = true;
-
                     } else if (caractere == '>') {
-                        valorAtual = new Integer(Token.NE);
+                        valor = Token.NE;
                         feito = true;
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         feito = true;
-
                     }
-
                 }
-                break;
 
-                case 4: {
+                case 4 -> {
+                    if (caractere == '=') {
+                        tipo = Token.RELOP;
+                        valor = Token.EQ;
+                    } else {
+                        paraBuffer(caractere);
+                    }
+                    feito = true;//identifiquei um token, nao precisa continuar no while
+                }
+
+                case 7 -> {
 
                     if (caractere == '=') {
-
-                        tipoAtual = Token.RELOP;
-                        valorAtual = new Integer(Token.EQ);
-
-                        feito = true;//identifiquei um token, nao precisa continuar no while
-
+                        tipo = Token.RELOP;
+                        valor = Token.NE;
                     } else {
-
-                        retorneParaBuffer(caractere);
-                        feito = true;
-
+                        paraBuffer(caractere);
                     }
 
+                    feito = true;
                 }
-                break;
 
-                case 7: {
-
+                case 10 -> {
                     if (caractere == '=') {
-
-                        tipoAtual = Token.RELOP;
-                        valorAtual = new Integer(Token.NE);
-                        feito = true;
-
+                        valor = Token.GE;
                     } else {
-
-                        retorneParaBuffer(caractere);
-                        feito = true;
-
+                        paraBuffer(caractere);
                     }
-
+                    feito = true;
                 }
-                break;
 
-                case 10: {
-
-                    if (caractere == '=') {
-
-                        valorAtual = new Integer(Token.GE);
-                        feito = true;
-
-                    } else {
-
-                        retorneParaBuffer(caractere);
-                        feito = true;
-                    }
-
-                }
-                break;
-
-                case 24: {
-
+                case 24 -> {
                     if (caractere == '/') {
-
                         while (caractere != '\n' && caractere != -1) {
-
-                            caractere = pegarDoBuffer();
-
+                            caractere = doBuffer();
                         }
 
                         estado = 0;
-
                     } else if (caractere == '*') {
+                        do {
+                            caractere = doBuffer();
+                        } while (caractere != '*' && caractere != -1);
 
-                        caractere = pegarDoBuffer();
-
-                        while (caractere != '*' && caractere != -1) {
-
-                            caractere = pegarDoBuffer();
-
-                        }
-
-                        caractere = pegarDoBuffer();
+                        caractere = doBuffer();
 
                         if (caractere != '/') {
-
                             estado = 24;
-
                         } else {
-
                             estado = 0;
-
                         }
-
                     } else {
-
-                        tipoAtual = Token.OP;
-                        valorAtual = new Integer(Token.DIV);
-
-                        retorneParaBuffer(caractere);
+                        tipo = Token.OP;
+                        valor = Token.DIV;
+                        paraBuffer(caractere);
                         feito = true;
-
                     }
-
                 }
-                break;
 
-                case 28: {
-
+                case 28 -> {
                     if (caractere == '&') {
-
-                        tipoAtual = Token.LOG;
-                        valorAtual = new Integer(Token.AND);
-
+                        tipo = Token.LOG;
+                        valor = Token.AND;
                         feito = true;
-
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 29: {
-
-                    if (caractere == '*' && pegarDoBuffer() == '/') {
-
-                        valorAtual = sBuffer;
+                case 29 -> {
+                    if (caractere == '*' && doBuffer() == '/') {
+                        valor = stringBuffer;
                         feito = true;
-
                     } else {
-
                         estado = 29;
-
-                        sBuffer.append((char) caractere);
-
+                        stringBuffer.append((char) caractere);
                     }
-
                 }
-                break;
 
-                case 32: {
-
+                case 32 -> {
                     if (caractere == '|') {
-
-                        tipoAtual = Token.LOG;
-                        valorAtual = new Integer(Token.OR);
-
+                        tipo = Token.LOG;
+                        valor = Token.OR;
                         feito = true;
-
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 35: {
-
+                case 35 -> {
                     if (Simbolos.isLetra(caractere) || caractere == '_') {
-
                         estado = 36;
-
-                        tipoAtual = Token.ID;
-
-                        sBuffer = new StringBuffer();
-                        sBuffer.append((char) caractere);
-
+                        tipo = Token.ID;
+                        stringBuffer = new StringBuffer();
+                        stringBuffer.append((char) caractere);
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 36: {
-
+                case 36 -> {
                     if (Character.isLetterOrDigit(caractere) || caractere == '_') {
-
                         estado = 36;
-
-                        sBuffer.append((char) caractere);
-
+                        stringBuffer.append((char) caractere);
                     } else {
-
-                        retorneParaBuffer(caractere);
-
-                        if (PalavrasChave.isPalavraChave(sBuffer)) {
-
-                            tipoAtual = PalavrasChave.tipoPalavraChave(sBuffer);
-                            valorAtual = null;
-
+                        paraBuffer(caractere);
+                        if (PalavrasChave.isPalavraChave(stringBuffer)) {
+                            tipo = PalavrasChave.tipoPalavraChave(stringBuffer);
+                            valor = null;
                         } else {
-
-                            valorAtual = sBuffer.toString();
-
+                            valor = stringBuffer.toString();
                         }
-
                         feito = true;
-
                     }
-
                 }
-                break;
 
-                case 38: {
-
+                case 38 -> {
                     if (Character.isDigit(caractere)) {
-
                         estado = 39;
-
-                        tipoAtual = Token.LITERALNUMERICO;
-
-                        sBuffer = new StringBuffer();
-                        sBuffer.append((char) caractere);
-
+                        tipo = Token.LITERALNUMERICO;
+                        stringBuffer = new StringBuffer();
+                        stringBuffer.append((char) caractere);
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 39: {
-
+                case 39 -> {
                     if (Character.isDigit(caractere)) {
-
                         estado = 39;
-                        sBuffer.append((char) caractere);
-
-                    }
-		  /*else if(Character.isLetter(caractere)) {
-			  throw new LexerException();
-			  
-		  }*/
-                    else {
-
-                        retorneParaBuffer(caractere);
-
-                        valorAtual = new Integer(sBuffer.toString());
+                        stringBuffer.append((char) caractere);
+                    } else {
+                        paraBuffer(caractere);
+                        valor = Integer.valueOf(stringBuffer.toString());
                         feito = true;
-
                     }
-
                 }
-                break;
 
-                case 41: {
-
+                case 41 -> {
                     if (caractere == '\'') {
-
                         estado = 42;
-
-                        tipoAtual = Token.LITERALCHAR;
-
-                        sBuffer = new StringBuffer();
-
+                        tipo = Token.LITERALCHAR;
+                        stringBuffer = new StringBuffer();
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 42: {
-
+                case 42 -> {
                     if (Simbolos.isLetraOuDigito(caractere)) {
-
                         estado = 44;
-
-                        sBuffer.append((char) caractere);
-
+                        stringBuffer.append((char) caractere);
                     } else if (caractere == '\\') {
-
                         estado = 43;
-
-                        sBuffer.append((char) caractere);
-
+                        stringBuffer.append((char) caractere);
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
                     }
-
                 }
-                break;
 
-                case 43: {
-
+                case 43 -> {
                     if (caractere == 'r' || caractere == 'n' || caractere == 't' || caractere == '\\') {
-
                         estado = 44;
-
-                        sBuffer.append((char) caractere);
-
+                        stringBuffer.append((char) caractere);
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 44: {
-
+                case 44 -> {
                     if (caractere == '\'') {
-
-                        valorAtual = sBuffer;
-
+                        valor = stringBuffer;
                         feito = true;
-
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 46: {
-
+                case 46 -> {
                     if (caractere == '"') {
-
                         estado = 47;
-
-                        tipoAtual = Token.LITERALSTRING;
-
-                        sBuffer = new StringBuffer();
-
+                        tipo = Token.LITERALSTRING;
+                        stringBuffer = new StringBuffer();
                     } else {
-
-                        retorneParaBuffer(caractere);
-
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 47: {
-
+                case 47 -> {
                     if (Simbolos.isLetraOuDigito(caractere) || caractere == ' ') {
-
                         estado = 47;
-
-                        sBuffer.append((char) caractere);
-
+                        stringBuffer.append((char) caractere);
                     } else if (caractere == '\\') {
-
                         estado = 48;
-
-                        sBuffer.append((char) caractere);
-
+                        stringBuffer.append((char) caractere);
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = 49;
-
                     }
-
                 }
-                break;
 
-                case 48: {
-
+                case 48 -> {
                     if (caractere == '\\' || caractere == 'r' || caractere == 't' || caractere == 'n') {
-
                         estado = 47;
-
-                        sBuffer.append((char) caractere);
-
+                        stringBuffer.append((char) caractere);
                     } else {
-
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
 
-                case 49: {
-
+                case 49 -> {
                     if (caractere == '"') {
-
-                        valorAtual = sBuffer;
+                        valor = stringBuffer;
                         feito = true;
-
                     } else {
-
-                        retorneParaBuffer(caractere);
+                        paraBuffer(caractere);
                         estado = getProximoEstado();
-
                     }
-
                 }
-                break;
-
-                default: {
-
-                    throw new Error("Estado nao esperado!!!");
-
-                }
-
+                default -> throw new RuntimeException("Estado nao esperado!!!");
             }
+        } while (!feito);
 
-        }
-        //System.out.println(estado);
-        return new Token(tipoAtual, valorAtual);
-
+        return new Token(tipo, valor);
     }
 
-    private int pegarDoBuffer() throws IOException {
-
-        int result;
-
-        if (bufferValid) {
-
-            result = buffer;
-            bufferValid = false;
-
-        } else {
-
-            result = reader.read();
-            bufferValid = false;
-
+    private int doBuffer() throws IOException {
+        if (temBuffer) {
+            temBuffer = false;
+            return buffer;
         }
 
-        return result;
-
+        return reader.read();
     }
 
-    private void retorneParaBuffer(int c) {
-
-        if (bufferValid) {
-
-            throw new Error("Buffer cheio!!");
-
+    private void paraBuffer(int ch) {
+        if (temBuffer) {
+            throw new RuntimeException("Buffer cheio!!!");
         }
 
-        buffer = c;
-        bufferValid = true;
-
+        buffer = ch;
+        temBuffer = true;
     }
 
     private int getProximoEstado() throws LexerException {
-
-        int resultado = 0;
-
-        switch (estado) {
-
-            case 0:
-                resultado = 35;
-                break;
-
-            case 35:
-                resultado = 38;
-                break;
-
-            case 38:
-                resultado = 41;
-                break;
-
-            case 41:
-                resultado = 46;
-                break;
-
-            default:
-                throw new LexerException("Erro Lexico: Impossível reconhecer token ");
-
-        }
-
-        return resultado;
-
+        return switch (estado) {
+            case 0 -> 35;
+            case 35 -> 38;
+            case 38 -> 41;
+            case 41 -> 46;
+            default -> throw new LexerException("Erro Lexico: Impossível reconhecer token ");
+        };
     }
 
 }

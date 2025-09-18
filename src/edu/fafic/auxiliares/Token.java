@@ -1,6 +1,6 @@
 package edu.fafic.auxiliares;
 
-public class Token {
+public record Token(int tipo, Object valor) {
 
     // Constantes para tipos de token
 
@@ -68,306 +68,95 @@ public class Token {
     public static final int VG = 6;
 
 
-    // Atributos
-
-    private int tipo;
-    private Object valor;
-
-    // Construtores
-
-    public Token(int tipo, Object valor) {
-
-        this.tipo = tipo;
-        this.valor = valor;
-
-    }
-
     public Token(int tipo) {
-
         this(tipo, null);
-
     }
-
-    // M�todos para criar tokens
 
     public static Token EOF() {
-
         return new Token(EOF);
-
-    }
-
-    public int getTipo() {
-
-        return this.tipo;
-
-    }
-
-    public Object getValor() {
-
-        return this.valor;
-
     }
 
     public String toString() {
+        String valorString = switch (tipo) {
+            case RELOP -> RELOP((int) valor);
+            case AT -> "ATR";
+            case OP -> OP((int) valor);
+            case LOG -> tipoLog((int) valor);
+            case PONTUACAO -> tipoPontuacao((int) valor);
+            default -> "-";
+        };
 
-        String valorString = "-";
+        return "<%s, %s>".formatted(STRING(), valorString);
+    }
 
-        switch (tipo) {
+    private String STRING() {
+        return switch (tipo) {
+            case CHAR -> "char";
+            case ELSE -> "else";
+            case FALSE -> "falso";
+            case IF -> "if";
+            case INT -> "int";
+            case MAIN -> "main";
+            case OUT -> "out";
+            case PRINTF -> "printf";
+            case RETURN -> "return";
+            case STATIC -> "static";
+            case VOID -> "void";
+            case WHILE -> "while";
+            case ID -> "id";
+            case LITERALNUMERICO -> "literalNumerico";
+            case LITERALSTRING -> "literalString";
+            case LITERALCHAR -> "literalChar";
+            case AT -> "at";
+            case OP -> "op";
+            case LOG -> "log";
+            case RELOP -> "relop";
+            case PONTUACAO -> "pontuacao";
+            default -> "Erro";
+        };
+    }
 
-            case RELOP:
-                valorString = tipoRelop((Integer) valor);
-                break;
+    private String RELOP(int tipo) {
+        return switch (tipo) {
+            case LT -> "LT";
+            case LE -> "LE";
+            case GT -> "GT";
+            case GE -> "GE";
+            case EQ -> "EQ";
+            case NE -> "NE";
+            default -> "Erro";
+        };
+    }
 
-            case AT:
-                valorString = "ATR";
-                break;
-
-            case OP:
-                valorString = tipoOP((Integer) valor);
-                break;
-
-            case LOG:
-                valorString = tipoLog((Integer) valor);
-                break;
-
-            case PONTUACAO:
-                valorString = tipoPontuacao((Integer) valor);
-                break;
-
-            default: {
-
-                if (valor != null) {
-
-                    valorString = valor.toString().trim();
-
-                }
-
-            }
-
-        }
-
-        return "<" + tipoString() + ", " + valorString + ">";
+    private String OP(int tipo) {
+        return switch (tipo) {
+            case AD -> "+";
+            case SUB -> "-";
+            case MUL -> "*";
+            case DIV -> "/";
+            default -> "Erro";
+        };
 
     }
 
-    private String tipoString() {
-
-        String resultado = "Erro";
-
-        switch (tipo) {
-
-            case CHAR:
-                resultado = "char";
-                break;
-
-            case ELSE:
-                resultado = "else";
-                break;
-
-            case FALSE:
-                resultado = "falso";
-                break;
-
-            case IF:
-                resultado = "if";
-                break;
-
-            case INT:
-                resultado = "int";
-                break;
-
-            case MAIN:
-                resultado = "main";
-                break;
-
-            case OUT:
-                resultado = "out";
-                break;
-
-            case PRINTF:
-                resultado = "printf";
-                break;
-
-            case RETURN:
-                resultado = "return";
-                break;
-
-            case STATIC:
-                resultado = "static";
-                break;
-
-            case VOID:
-                resultado = "void";
-                break;
-
-            case WHILE:
-                resultado = "while";
-                break;
-
-            case ID:
-                resultado = "id";
-                break;
-
-            case LITERALNUMERICO:
-                resultado = "literalNumerico";
-                break;
-
-            case LITERALSTRING:
-                resultado = "literalString";
-                break;
-
-            case LITERALCHAR:
-                resultado = "literalChar";
-                break;
-
-            case AT:
-                resultado = "at";
-                break;
-
-            case OP:
-                resultado = "op";
-                break;
-
-            case LOG:
-                resultado = "log";
-                break;
-
-            case RELOP:
-                resultado = "relop";
-                break;
-
-            case PONTUACAO:
-                resultado = "pontua��o";
-                break;
-
-        }
-
-        return resultado;
-
+    private String tipoLog(int tipo) {
+        return switch (tipo) {
+            case AND -> "&&";
+            case OR -> "||";
+            case NOT -> "!";
+            default -> "Erro";
+        };
     }
 
-    private String tipoRelop(Integer tipo1) {
-
-        String resultado = "Erro";
-
-        switch (tipo1.intValue()) {
-
-            case LT:
-                resultado = "LT";
-                break;
-
-            case LE:
-                resultado = "LE";
-                break;
-
-            case GT:
-                resultado = "GT";
-                break;
-
-            case GE:
-                resultado = "GE";
-                break;
-
-            case EQ:
-                resultado = "EQ";
-                break;
-
-            case NE:
-                resultado = "NE";
-                break;
-
-        }
-
-        return resultado;
-
+    private String tipoPontuacao(int tipo) {
+        return switch (tipo) {
+            case AP -> "(";
+            case FP -> ")";
+            case AC -> "{";
+            case FC -> "}";
+            case PV -> ";";
+            case VG -> ",";
+            default -> "Erro";
+        };
     }
-
-    private String tipoOP(Integer tipo1) {
-
-        String resultado = "Erro";
-
-        switch (tipo1.intValue()) {
-
-            case AD:
-                resultado = "+";
-                break;
-
-            case SUB:
-                resultado = "-";
-                break;
-
-            case MUL:
-                resultado = "*";
-                break;
-
-            case DIV:
-                resultado = "/";
-                break;
-
-        }
-
-        return resultado;
-
-    }
-
-    private String tipoLog(Integer tipo1) {
-
-        String resultado = "Erro";
-
-        switch (tipo1.intValue()) {
-
-            case AND:
-                resultado = "&&";
-                break;
-
-            case OR:
-                resultado = "||";
-                break;
-
-            case NOT:
-                resultado = "!";
-                break;
-
-        }
-
-        return resultado;
-
-    }
-
-    private String tipoPontuacao(Integer valor2) {
-
-        String resultado = "Erro";
-
-        switch (valor2.intValue()) {
-
-            case AP:
-                resultado = "(";
-                break;
-
-            case FP:
-                resultado = ")";
-                break;
-
-            case AC:
-                resultado = "{";
-                break;
-
-            case FC:
-                resultado = "}";
-                break;
-
-            case PV:
-                resultado = ";";
-                break;
-
-            case VG:
-                resultado = ",";
-                break;
-
-        }
-
-        return resultado;
-
-    }
-
 }

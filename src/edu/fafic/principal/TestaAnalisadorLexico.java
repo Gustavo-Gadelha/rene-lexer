@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 public class TestaAnalisadorLexico {
 
     public static void main(String[] args) {
-
         BufferedReader bufferedReader;
         AnalisadorLexico analisadorLexico;
         Token token;
@@ -18,26 +17,18 @@ public class TestaAnalisadorLexico {
         System.out.println("Analise Léxica: \n");
 
         try {
-
             bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream("Programa.lex")));
 
             analisadorLexico = new AnalisadorLexico(bufferedReader);
             token = analisadorLexico.pegarProximoToken();
 
-            while (token.getTipo() != Token.EOF) {
-
+            while (token.tipo() != Token.EOF) {
                 System.out.println("Token: " + token);
-
                 token = analisadorLexico.pegarProximoToken();
-
             }
 
         } catch (Exception e) {
-
             System.err.println("Exceção: " + e.getMessage());
-
         }
-
     }
-
 }
