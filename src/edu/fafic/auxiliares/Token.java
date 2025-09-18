@@ -78,11 +78,11 @@ public record Token(int tipo, Object valor) {
 
     public String toString() {
         String valorString = switch (tipo) {
-            case RELOP -> RELOP((int) valor);
             case AT -> "ATR";
             case OP -> OP((int) valor);
-            case LOG -> tipoLog((int) valor);
-            case PONTUACAO -> tipoPontuacao((int) valor);
+            case LOG -> LOG((int) valor);
+            case RELOP -> RELOP((int) valor);
+            case PONTUACAO -> PONTUACAO((int) valor);
             default -> "-";
         };
 
@@ -139,7 +139,7 @@ public record Token(int tipo, Object valor) {
 
     }
 
-    private String tipoLog(int tipo) {
+    private String LOG(int tipo) {
         return switch (tipo) {
             case AND -> "&&";
             case OR -> "||";
@@ -148,7 +148,7 @@ public record Token(int tipo, Object valor) {
         };
     }
 
-    private String tipoPontuacao(int tipo) {
+    private String PONTUACAO(int tipo) {
         return switch (tipo) {
             case AP -> "(";
             case FP -> ")";
